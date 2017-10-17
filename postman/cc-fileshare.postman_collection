@@ -1,0 +1,51 @@
+{
+	"variables": [],
+	"info": {
+		"name": "cc-fileshare",
+		"_postman_id": "62bb4a13-1916-5576-f6e1-b993d45b0b07",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "File search by attribute",
+			"request": {
+				"url": "127.0.0.1:8080/fileshare/files_search",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid\":111}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create new row in db",
+			"request": {
+				"url": "127.0.0.1:8080/fileshare/files",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid\":111}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
