@@ -30,7 +30,7 @@
 		{
 			"name": "Update file attributes",
 			"request": {
-				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000",
+				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000/info",
 				"method": "PUT",
 				"header": [
 					{
@@ -52,6 +52,45 @@
 			"request": {
 				"url": "127.0.0.1:8080/fileshare/files",
 				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "filename",
+							"value": "test",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"description": "",
+							"type": "file",
+							"src": "IMG_06102017_120401_0.png"
+						},
+						{
+							"key": "someid",
+							"value": "123",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "newvalue",
+							"value": "3333",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get file info by fileid",
+			"request": {
+				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000/info",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -61,16 +100,16 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid\":111}\n}"
+					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid_2\":111}\n}"
 				},
 				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "Get file info by fileid",
+			"name": "Get file by fileid",
 			"request": {
-				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000",
+				"url": "127.0.0.1:8080/fileshare/files/7d4b73ef-a108-4a36-9711-a1bf085b40b0",
 				"method": "GET",
 				"header": [
 					{

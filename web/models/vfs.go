@@ -52,8 +52,8 @@ func (m VFSModel) GetById(fileId *pgtype.UUID) (*forms.VFSResponse, error) {
 }
 
 func (m VFSModel) SearchByAttr(jsonb pgtype.JSONB) (*forms.VFSResponse, error) {
-	var vfs = new(VFS)
-	err := db.GetPool().QueryRow("select userid, fileId, filename, creation_date, attributes from vfs where attributes @> $1", jsonb.Bytes).Scan(&vfs.Userid, &vfs.Fileid, &vfs.Filename, &vfs.Creation_date, &vfs.Attributes)
+	row := db.GetPool().QueryRow("select userid, fileId, filename, creation_date, attributes from vfs where attributes @> $1", jsonb.Bytes)
+	vfs, err := m.Scan(row)
 	if err != nil{
 		return nil, err
 	} else {

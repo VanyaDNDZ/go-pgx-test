@@ -4,7 +4,7 @@ import "time"
 
 type VFSForm struct {
 	Filename string `form:"filename" json:"filename" binding:"required"`
-	Attributes interface{} `form:"Attributes" json:"Attributes" binding:"required"`
+	Attributes interface{} `form: - json:"Attributes" binding:"required"`
 }
 
 type VFSResponse struct {

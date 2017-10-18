@@ -9,6 +9,7 @@ import (
 	"log"
 	"github.com/jackc/pgx/pgtype"
 	"fmt"
+	"net/http"
 )
 
 type FilesController struct{}
@@ -25,14 +26,27 @@ func (ctrl FilesController) AddFile(c *gin.Context) {
 	var form forms.VFSForm
 	var model = new(models.VFSModel)
 	if err := c.Bind(&form); err == nil {
+
 		var vfs = new(models.VFS)
 		vfs.Creation_date.Set(time.Now())
 		vfs.Userid.Set("1")
 		vfs.Attributes.Set(form.Attributes)
 		vfs.Filename.Set(form.Filename)
 		vfs.Fileid.Set(uuid.NewV4().Bytes())
+
 		if err := model.Insert(vfs); err != nil {
 			log.Fatal(err)
+		}
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+			return
+		}
+		filename := new(string)
+		vfs.Fileid.AssignTo(filename)
+		if err := c.SaveUploadedFile(file, *filename); err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			return
 		}
 
 	} else {
@@ -57,22 +71,6 @@ func (ctrl FilesController) SearchFile(c *gin.Context) {
 	}
 }
 
-func (ctrl FilesController) CacheSearch(c *gin.Context) {
-	var form forms.VFSForm
-	var model = new(models.VFSModel)
-	if err := c.Bind(&form); err == nil {
-		var jsonb pgtype.JSONB
-		jsonb.Set(form.Attributes)
-		if row, err := model.SearchByAttr(jsonb); err == nil {
-			c.JSON(200, row)
-		} else {
-			log.Fatal(err)
-		}
-
-	} else {
-		log.Fatal(err)
-	}
-}
 
 func (ctrl FilesController) UpdateAttributes(c *gin.Context) {
 	var inputForm forms.VFSForm
@@ -99,6 +97,17 @@ func (ctrl FilesController) GetFileInfo(c *gin.Context) {
 	fileid.Set(c.Params.ByName("fileid"))
 	if vfs, err := model.GetById(fileid); err == nil {
 		c.JSON(200, vfs)
+	} else {
+		c.Error(err)
+	}
+}
+
+func (ctrl FilesController) GetFile(c *gin.Context) {
+	var model = new(models.VFSModel)
+	var fileid = new(pgtype.UUID)
+	fileid.Set(c.Params.ByName("fileid"))
+	if vfs, err := model.GetById(fileid); err == nil {
+		c.File(vfs.Fileid)
 	} else {
 		c.Error(err)
 	}

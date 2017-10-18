@@ -9,7 +9,8 @@ func CreateApiV1(engine *gin.Engine) {
 	fileController := new(controllers.FilesController)
 	fs := engine.Group("/fileshare")
 	fs.POST("/files", fileController.AddFile)
-	fs.PUT("/files/:fileid", fileController.UpdateAttributes)
-	fs.GET("/files/:fileid", fileController.GetFileInfo)
+	fs.PUT("/files/:fileid/info", fileController.UpdateAttributes)
+	fs.GET("/files/:fileid/info", fileController.GetFileInfo)
+	fs.GET("/files/:fileid", fileController.GetFile)
 	fs.POST("/files_search", fileController.SearchFile)
 }
