@@ -28,6 +28,26 @@
 			"response": []
 		},
 		{
+			"name": "Update file attributes",
+			"request": {
+				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid\":222}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "Create new row in db",
 			"request": {
 				"url": "127.0.0.1:8080/fileshare/files",
@@ -42,6 +62,26 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid\":111}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get file info by fileid",
+			"request": {
+				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid_2\":111}\n}"
 				},
 				"description": ""
 			},

@@ -4,6 +4,7 @@ import (
 	"github.com/jackc/pgx/pgtype"
 	"cc-fileshare/web/db"
 	"cc-fileshare/web/forms"
+	"github.com/jackc/pgx"
 )
 
 type VFS struct {
@@ -27,13 +28,26 @@ func (m VFSModel) Insert(vfs *VFS) error {
 	}
 }
 
-func (m VFSModel) GetById(fileId pgtype.UUID) (*VFS, error) {
+func (m *VFSModel) Scan(row *pgx.Row) (*VFS, error)  {
 	var vfs = new(VFS)
-	err := db.GetPool().QueryRow("select userid, fileId, filename, creation_date, attributes from vfs where fileId=$1", fileId).Scan(*vfs)
+	if err:= row.Scan(&vfs.Userid, &vfs.Fileid, &vfs.Filename, &vfs.Creation_date, &vfs.Attributes);  err == nil{
+		return vfs, nil
+	}else{
+		return nil, err
+	}
+
+}
+
+func (m VFSModel) GetById(fileId *pgtype.UUID) (*forms.VFSResponse, error) {
+
+	row := db.GetPool().QueryRow("select userid, fileId, filename, creation_date, attributes from vfs where fileId=$1", fileId)
+	vfs, err := m.Scan(row)
 	if err != nil{
 		return nil, err
 	} else {
-		return vfs, nil
+		form := new(forms.VFSResponse)
+		vfs.AssignTo(form)
+		return form, nil
 	}
 }
 
@@ -46,6 +60,18 @@ func (m VFSModel) SearchByAttr(jsonb pgtype.JSONB) (*forms.VFSResponse, error) {
 		form := new(forms.VFSResponse)
 		vfs.AssignTo(form)
 		return form, nil
+	}
+}
+
+func (m VFSModel) UpdateAttributes(fileId *pgtype.UUID, attributes *pgtype.JSONB) (*forms.VFSResponse, error) {
+	if _, err := db.GetPool().Exec(`
+	update vfs
+	set attributes = attributes || $2
+	where fileid = $1
+	`, fileId, attributes); err == nil{
+		return m.GetById(fileId)
+	} else{
+		return nil, err
 	}
 }
 

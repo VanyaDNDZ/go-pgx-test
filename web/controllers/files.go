@@ -8,6 +8,7 @@ import (
 	"time"
 	"log"
 	"github.com/jackc/pgx/pgtype"
+	"fmt"
 )
 
 type FilesController struct{}
@@ -22,7 +23,7 @@ type File interface {
 
 func (ctrl FilesController) AddFile(c *gin.Context) {
 	var form forms.VFSForm
-	var model = new (models.VFSModel)
+	var model = new(models.VFSModel)
 	if err := c.Bind(&form); err == nil {
 		var vfs = new(models.VFS)
 		vfs.Creation_date.Set(time.Now())
@@ -30,45 +31,75 @@ func (ctrl FilesController) AddFile(c *gin.Context) {
 		vfs.Attributes.Set(form.Attributes)
 		vfs.Filename.Set(form.Filename)
 		vfs.Fileid.Set(uuid.NewV4().Bytes())
-		if err := model.Insert(vfs); err != nil{
+		if err := model.Insert(vfs); err != nil {
 			log.Fatal(err)
 		}
 
-	}else{
+	} else {
 		log.Fatal(err)
 	}
 }
 
 func (ctrl FilesController) SearchFile(c *gin.Context) {
 	var form forms.VFSForm
-	var model = new (models.VFSModel)
+	var model = new(models.VFSModel)
 	if err := c.Bind(&form); err == nil {
 		var jsonb pgtype.JSONB
 		jsonb.Set(form.Attributes)
-		if row, err := model.SearchByAttr(jsonb); err == nil{
+		if row, err := model.SearchByAttr(jsonb); err == nil {
 			c.JSON(200, row)
-		}else{
+		} else {
 			log.Fatal(err)
 		}
 
-	}else{
+	} else {
 		log.Fatal(err)
 	}
 }
 
 func (ctrl FilesController) CacheSearch(c *gin.Context) {
 	var form forms.VFSForm
-	var model = new (models.VFSModel)
+	var model = new(models.VFSModel)
 	if err := c.Bind(&form); err == nil {
 		var jsonb pgtype.JSONB
 		jsonb.Set(form.Attributes)
-		if row, err := model.SearchByAttr(jsonb); err == nil{
+		if row, err := model.SearchByAttr(jsonb); err == nil {
 			c.JSON(200, row)
-		}else{
+		} else {
 			log.Fatal(err)
 		}
 
-	}else{
+	} else {
 		log.Fatal(err)
+	}
+}
+
+func (ctrl FilesController) UpdateAttributes(c *gin.Context) {
+	var inputForm forms.VFSForm
+	if err := c.Bind(&inputForm); err == nil {
+		var model = new(models.VFSModel)
+		var fileid = new(pgtype.UUID)
+		fileid.Set(c.Params.ByName("fileid"))
+		jsonb := new(pgtype.JSONB)
+		jsonb.Set(inputForm.Attributes)
+		if vfs, err := model.UpdateAttributes(fileid, jsonb); err == nil {
+			c.JSON(200, vfs)
+		} else {
+			c.Error(err)
+		}
+	} else {
+		fmt.Printf("Wrong parameters: %v", err)
+		c.String(422, ("Wrong parameters"))
+	}
+}
+
+func (ctrl FilesController) GetFileInfo(c *gin.Context) {
+	var model = new(models.VFSModel)
+	var fileid = new(pgtype.UUID)
+	fileid.Set(c.Params.ByName("fileid"))
+	if vfs, err := model.GetById(fileid); err == nil {
+		c.JSON(200, vfs)
+	} else {
+		c.Error(err)
 	}
 }
