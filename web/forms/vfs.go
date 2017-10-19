@@ -7,6 +7,11 @@ type VFSForm struct {
 	Attributes interface{} `form: - json:"Attributes" binding:"required"`
 }
 
+type VFSResizeForm struct {
+	Width uint `form:"width"`
+	Height uint `form:"height"`
+}
+
 type VFSResponse struct {
 	Userid string
 	Fileid string

@@ -89,7 +89,7 @@
 		{
 			"name": "Get file info by fileid",
 			"request": {
-				"url": "127.0.0.1:8080/fileshare/files/00000000-0000-0000-0000-000000000000/info",
+				"url": "127.0.0.1:8080/fileshare/files/7d4b73ef-a108-4a36-9711-a1bf085b40b0/info",
 				"method": "GET",
 				"header": [
 					{
@@ -109,7 +109,85 @@
 		{
 			"name": "Get file by fileid",
 			"request": {
-				"url": "127.0.0.1:8080/fileshare/files/7d4b73ef-a108-4a36-9711-a1bf085b40b0",
+				"url": {
+					"raw": "127.0.0.1:8080/fileshare/files/7d4b73ef-a108-4a36-9711-a1bf085b40b0?width=512&height=0",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"fileshare",
+						"files",
+						"7d4b73ef-a108-4a36-9711-a1bf085b40b0"
+					],
+					"query": [
+						{
+							"key": "width",
+							"value": "512",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "height",
+							"value": "0",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"filename\":\"test.txt\",\n\"attributes\":{\"someid_2\":111}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get file with resize",
+			"request": {
+				"url": {
+					"raw": "127.0.0.1:8080/fileshare/files/7d4b73ef-a108-4a36-9711-a1bf085b40b0?width=1024&height=0",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"fileshare",
+						"files",
+						"7d4b73ef-a108-4a36-9711-a1bf085b40b0"
+					],
+					"query": [
+						{
+							"key": "width",
+							"value": "1024",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "height",
+							"value": "0",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
 				"method": "GET",
 				"header": [
 					{

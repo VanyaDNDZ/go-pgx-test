@@ -10,6 +10,11 @@ import (
 	"github.com/jackc/pgx/pgtype"
 	"fmt"
 	"net/http"
+	"os"
+	"github.com/nfnt/resize"
+	"image"
+	"io/ioutil"
+	"image/png"
 )
 
 type FilesController struct{}
@@ -71,7 +76,6 @@ func (ctrl FilesController) SearchFile(c *gin.Context) {
 	}
 }
 
-
 func (ctrl FilesController) UpdateAttributes(c *gin.Context) {
 	var inputForm forms.VFSForm
 	if err := c.Bind(&inputForm); err == nil {
@@ -107,8 +111,39 @@ func (ctrl FilesController) GetFile(c *gin.Context) {
 	var fileid = new(pgtype.UUID)
 	fileid.Set(c.Params.ByName("fileid"))
 	if vfs, err := model.GetById(fileid); err == nil {
-		c.File(vfs.Fileid)
+		var resizeForm forms.VFSResizeForm
+		if err := c.Bind(&resizeForm); err == nil {
+
+			img := resizeImage(vfs.Fileid, resizeForm.Width, resizeForm.Height)
+			tmpfile, err := ioutil.TempFile(".", "tmp-"+vfs.Fileid)
+			if err != nil {
+				log.Fatal(err)
+				c.AbortWithError(http.StatusBadRequest, err)
+				return
+			}
+
+			err = png.Encode(tmpfile, img)
+			tmpfile.Close()
+			c.File(tmpfile.Name())
+			defer os.Remove(tmpfile.Name())
+		} else {
+			c.File(vfs.Fileid)
+		}
 	} else {
 		c.Error(err)
 	}
+}
+
+func resizeImage(originFileName string, width, height uint) image.Image {
+	file, err := os.Open(originFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	img, err := png.Decode(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return resize.Resize(width, height, img, resize.Lanczos3)
 }
